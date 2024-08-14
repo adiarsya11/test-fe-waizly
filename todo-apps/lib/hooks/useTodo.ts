@@ -46,7 +46,7 @@ const useTodo = () => {
     });
   }, []);
 
-  const { data, error, isLoading } = useQuery(
+  const { data } = useQuery(
     ["weather", latitude, longitude],
     () => getWeather(latitude, longitude),
     {
@@ -58,9 +58,7 @@ const useTodo = () => {
     const weatherCondition = data?.weather[0];
     return {
       name: data?.name,
-      condition: weatherCondition,
       temperature: Math.round(Number(data?.main.temp) - 273.15),
-      icon: `http://openweathermap.org/img/wn/${weatherCondition?.icon}.png`,
       main: data?.main,
       description: weatherCondition?.description,
       sys: data?.sys,

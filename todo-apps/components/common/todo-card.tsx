@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Todo } from "@/lib/type";
+import { Todo } from "@/lib/types";
 import ConfirmDeleteDialog from "@/components/common/confirm-dialog";
 import { Trash2 } from "lucide-react";
 

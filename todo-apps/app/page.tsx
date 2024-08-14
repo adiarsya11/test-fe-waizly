@@ -51,7 +51,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-16">
-      <div className="p-4 shadow-xl w-1/4 text-center rounded h-min">
+      <div className="p-4 shadow-xl w-80 md:w-1/2 text-center rounded h-min bg-white">
         <h1 className="text-xl font-bold">
           Weather in {weatherData.name}, {weatherData.sys?.country}
         </h1>
