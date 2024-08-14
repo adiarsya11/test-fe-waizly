@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-import { Todo } from "../type";
+import { useEffect, useMemo, useState } from "react";
+import { Todo } from "../types";
 import { addTodosToLocalStorage } from "../utils";
+import { useQuery } from "react-query";
+import { getWeather } from "../api/weather";
 
 const TODO_KEY = "todos";
 
@@ -11,11 +13,61 @@ const useTodo = () => {
   const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
   const [status, setStatus] = useState<"all" | "active" | "complete">("all");
 
+  const [latitude, setLatitude] = useState<string>("");
+  const [longitude, setLongitude] = useState<string>("");
+
+  const getCurrentLocation = () => {
+    return new Promise<void>((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation is not supported by this browser."));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude.toString());
+          setLongitude(position.coords.longitude.toString());
+          resolve();
+        },
+        (error) => {
+          reject(new Error(`Geolocation error: ${error.message}`));
+        }
+      );
+    });
+  };
+
   useEffect(() => {
     const storedTodos = localStorage.getItem(TODO_KEY);
     const todos = storedTodos ? JSON.parse(storedTodos) : [];
     setTodos(todos);
+
+    getCurrentLocation().catch((error) => {
+      console.error(error);
+    });
   }, []);
+
+  const { data, error, isLoading } = useQuery(
+    ["weather", latitude, longitude],
+    () => getWeather(latitude, longitude),
+    {
+      enabled: !!latitude && !!longitude,
+    }
+  );
+
+  const weatherData = useMemo(() => {
+    const weatherCondition = data?.weather[0];
+    return {
+      name: data?.name,
+      condition: weatherCondition,
+      temperature: Math.round(Number(data?.main.temp) - 273.15),
+      icon: `http://openweathermap.org/img/wn/${weatherCondition?.icon}.png`,
+      main: data?.main,
+      description: weatherCondition?.description,
+      sys: data?.sys,
+      feelsLike: Math.round(Number(data?.main.feels_like) - 273.15),
+      pressure: data?.main?.pressure,
+    };
+  }, [data]);
 
   const filterTodos = (status: string) => {
     if (status === "all") {
@@ -91,6 +143,7 @@ const useTodo = () => {
       search,
       status,
       content,
+      weatherData,
       filteredTodos,
     },
     method: {
