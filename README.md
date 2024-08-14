@@ -53,6 +53,12 @@ The file `implementation-test-backend-2.txt` contains my answer for the Backend 
 
 ## Preview
 
+- Desktop
 <p>
   <img src="images/preview-desktop.png" alt="preview-desktop">
+</p>
+
+- Mobile
+<p style="width 100px; height: 500px;"  >
+  <img src="images/preview-mobile.png" alt="preview-mobile">
 </p>
